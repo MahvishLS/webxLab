@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="BookApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Finder & Login</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto p-6" ng-controller="AuthController">
+        <h1 class="text-3xl font-bold text-center mb-6">Welcome to Book Finder</h1>
+        
+        <!-- One-Way and Two-Way Data Binding Demo -->
+        <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mb-6" ng-controller="BindingController">
+            <h2 class="text-2xl font-semibold mb-4">Data Binding Demo</h2>
+            <p class="mb-2">One-Way Binding: <span>{{ staticText }}</span></p>
+            <label class="block mb-2">Two-Way Binding: </label>
+            <input type="text" ng-model="dynamicText" placeholder="Type something..." class="w-full p-2 border rounded-md mb-2">
+            <p>You typed: {{ dynamicText }}</p>
+        </div>
+        
+        <!-- Login Form -->
+        <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md" ng-hide="isAuthenticated">
+            <h2 class="text-2xl font-semibold mb-4">Login</h2>
+            <form ng-submit="login()" class="space-y-4">
+                <input type="text" ng-model="user.username" placeholder="Username" class="w-full p-2 border rounded-md">
+                <input type="password" ng-model="user.password" placeholder="Password" class="w-full p-2 border rounded-md">
+                <button type="submit" class="w-full bg-purple-500 text-white py-2 rounded-md hover:bg-blue-600">Login</button>
+            </form>
+            <p class="text-red-500 mt-2" ng-show="errorMessage">{{errorMessage}}</p>
+        </div>
+
+        <!-- Book Search -->
+        <div class="mt-8" ng-show="isAuthenticated" ng-controller="BookController">
+            <h2 class="text-2xl font-semibold mb-4">Search Books</h2>
+            <input type="text" ng-model="searchQuery" placeholder="Search by title, author, or genre" class="w-full p-2 border rounded-md mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-md shadow-md" ng-repeat="book in books | bookFilter:searchQuery">
+                    <h3 class="text-lg font-semibold">{{ book.title }}</h3>
+                    <p class="text-gray-600">Author: {{ book.author }}</p>
+                    <p class="text-gray-500">Genre: {{ book.genre }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var app = angular.module('BookApp', []);
+
+        app.controller('AuthController', function($scope, AuthService) {
+            $scope.user = {};
+            $scope.isAuthenticated = false;
+            $scope.errorMessage = "";
+
+            $scope.login = function() {
+                if (AuthService.authenticate($scope.user.username, $scope.user.password)) {
+                    $scope.isAuthenticated = true;
+                    $scope.errorMessage = "";
+                } else {
+                    $scope.errorMessage = "Invalid username or password";
+                }
+            };
+        });
+
+        app.controller('BookController', function($scope) {
+            $scope.books = [
+                { title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Fiction' },
+                { title: '1984', author: 'George Orwell', genre: 'Dystopian' },
+                { title: 'To Kill a Mockingbird', author: 'Harper Lee', genre: 'Classic' },
+                { title: 'Moby-Dick', author: 'Herman Melville', genre: 'Adventure' },
+                { title: 'Pride and Prejudice', author: 'Jane Austen', genre: 'Romance' },
+                { title: 'War and Peace', author: 'Leo Tolstoy', genre: 'Historical' },
+                { title: 'The Catcher in the Rye', author: 'J.D. Salinger', genre: 'Coming-of-Age' },
+                { title: 'The Hobbit', author: 'J.R.R. Tolkien', genre: 'Fantasy' },
+                { title: 'Brave New World', author: 'Aldous Huxley', genre: 'Science Fiction' },
+                { title: 'The Lord of the Rings', author: 'J.R.R. Tolkien', genre: 'Fantasy' }
+            ];
+        });
+
+        app.controller('BindingController', function($scope) {
+            $scope.staticText = "Shravani Rasam D15A 45";
+            $scope.dynamicText = "";
+        });
+
+        app.filter('bookFilter', function() {
+            return function(books, query) {
+                if (!query) return books;
+                query = query.toLowerCase();
+                return books.filter(book =>
+                    book.title.toLowerCase().includes(query) ||
+                    book.author.toLowerCase().includes(query) ||
+                    book.genre.toLowerCase().includes(query)
+                );
+            };
+        });
+
+        app.service('AuthService', function() {
+            var validCredentials = { username: 'admin', password: '1234' };
+            this.authenticate = function(username, password) {
+                return username === validCredentials.username && password === validCredentials.password;
+            };
+        });
+    </script>
+</body>
+</html>

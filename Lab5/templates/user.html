@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+    <h1>Hello, {{ username }}!</h1>
+    <p>Welcome to your profile page.</p>
+    <p><a href="{{ url_for('home') }}">Back to Homepage</a></p>
+{% endblock %}
+

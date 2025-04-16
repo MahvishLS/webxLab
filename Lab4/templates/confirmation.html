@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirmation</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Confirmation</h1>
+    <p>Thank you for your submission!</p>
+    <p>Your name is {{ name }} and your age is {{ age }}.</p>
+    <p><a href="{{ url_for('home') }}">Back to Homepage</a></p>
+</body>
+</html>
